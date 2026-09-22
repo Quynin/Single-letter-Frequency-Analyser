@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title>Single-letter Frequency Analyser</title>
+    </head>
+
+
+    <body>
+        <div>
+            <div>
+                <!-- CIPHER TEXT DISPLAYED HERE -->
+                <p id="cipher-text-p">
+
+                </p>
+
+                <!-- USER INPUTS KEY SIZE -->
+                <input type="text" id="key-size-input" name="key length" value="3"/>
+
+            </div>
+        </div>
+
+    </body>
+
+    <footer>
+        <!-- THIS WILL EVENTAULLY BE REPLACED WITH BETTER WAY TO INPUT CIPHER TEXT? -->
+        <script type="text/javascript">
+            const cipherTextDisplay = document.getElementById("cipher-text-p")
+            cipherTextDisplay.innerText = "AWAWA";
+        </script>
+
+        
+        <script type="text/javascript">
+
+            //Get cipher text; uppercase letter characters will be from between [65, 90]
+            const cipherText = document.getElementById("cipher-text-p").innerText.toUpperCase()
+
+            //Get key length for arrays
+            const keyLength = document.getElementById("key-size-input")
+
+            //Create array for each character in the key; all character counts initialised to 0
+            var slfaArrays = (keyLength) => {
+                const matrix = [];
+                for (let i = 0; i < keyLength; i++) {
+                    const row = [];
+                    for (let j = 0; j < 26; j++) {
+                        row.push(26);
+                    }
+                    matrix.push(row);
+                }
+                return matrix;
+            }
+
+            //Iterate through array 
+            for (let i = 0; i < cipherText.length; i++) {
+                //If cipherText[i] is in alphabet A-Z
+                if (65 <= cipherText[i] && cipherText[i] <= 90) 
+                    //Increment the character count in the corresponding key
+                    slfaArrays[i % keyLength][cipherText[i] - 65]++;
+            }
+        </script>
+    </footer>
+</html>
