@@ -24,38 +24,49 @@
         <!-- THIS WILL EVENTAULLY BE REPLACED WITH BETTER WAY TO INPUT CIPHER TEXT? -->
         <script type="text/javascript">
             const cipherTextDisplay = document.getElementById("cipher-text-p")
-            cipherTextDisplay.innerText = "AWAWA";
+            //TODO: CHANGE TO READING FROM txt OR TO BE PASTED IN BY USER ON HTML
+            cipherTextDisplay.innerText = "EG YIA DVMK UFUB VZUB YZBE OI OXTUQKGI EEQ NQQJ KEL QI BETVM LVYMO IVVQNVUBP WZLO KPB JFCPG NIP GEOXIVL YA KPB TZDBT RVA JRL IGWB EKD WKNP WK NVIOPZVD VYIQ VYM ICUQBU FN QJV NXOZTV KEBBPUMA C MQPKK BL IVWOIZIKC KPXV DWOPZVD PF ALQEMO FZL EG RXMGRZ QJRV BNZHXDVBE YZABNP ZBUFTSGU BL DV XBTWMZVCG BCJG XPU CKGDJXTIIPUVLX TVALNLBFQE BEG DWOG EMZGJAXTP BL DV UXFV JRV GMOJRXP PFB QJV ULTV MXUZTV MVXQ DVKXWJM PJV AXY KPXV KPB ULAMKTQLPJ WC VYM TJFTB RRZQA NMOG REXMVVBF ROXKEAQ VYMJ CEL QJRB QJVZB YRA PERZZGCG XP VGB YYQZJ UQA PFB TCKKE JZA YGYISKFCO YYMK JV NFTJB ZCDM FPKW QJV ZLQD QK PF KLWEBBPRVZG NIP CKBBPKQSG TCOKFAFVP AL UKZLPXTV ORZHGU IP KE UFUJ JFPXTBAJ QK UGQQG FN QJV AJKCMP YYQZJ FDBTJXOGRL EGI NXEV EEGEMSGI AEG JXLMV BL QEM LH ZBP QSRBEKA CQI RBCCWRUP PXF EWQ AVB JCUM EGI LBUGMOCKM XPU PBT RBQGEBFQEA QQ DZ ACIKV YVZB DP VL OVIKU FDBT DQPU UIOEP WK JVZ YTFBEGIA BPKZXPTM BZVZQGU PBTJMIH DCZJ DWOG KW QCCS XPU MIKQIYGKP PCN BECK PB YRA XPOQLWJ NLT YQP UZAQGI IKF YMOUVTC VF OBV RKNWRQKVVL XPU NLTNIOFVL XU DCZJ RA MQJAFDCM BXVZV CKBBOGB XV TWKXVZPCKQLP FV BKKPBT JQAG DQPU SQKICMV URE XNC BEKJ TFMVEFUV IKF ZV QJV QJRICAGEKB QW IKIVZ QQFS QJV NFTJB LRGWOVLVFVP WC URGFPX EFVY AKGVZFPX KFXZTFVP";
         </script>
 
         
         <script type="text/javascript">
 
             //Get cipher text; uppercase letter characters will be from between [65, 90]
-            const cipherText = document.getElementById("cipher-text-p").innerText.toUpperCase()
+            const cipherText = document.getElementById("cipher-text-p").innerText.toUpperCase();
+            console.log("C: " + cipherText);
 
             //Get key length for arrays
-            const keyLength = document.getElementById("key-size-input")
+            const keyLength = document.getElementById("key-size-input").value;
 
             //Create array for each character in the key; all character counts initialised to 0
-            var slfaArrays = (keyLength) => {
+            function createslfaArrays(keyLength) {
                 const matrix = [];
+                //console.log("KeyLength: " + keyLength);
                 for (let i = 0; i < keyLength; i++) {
                     const row = [];
                     for (let j = 0; j < 26; j++) {
-                        row.push(26);
+                        row.push(0);
                     }
+                    //console.log("ROW: " + row);
                     matrix.push(row);
                 }
                 return matrix;
             }
 
+            var slfaArrays = createslfaArrays(keyLength);
+
             //Iterate through array 
             for (let i = 0; i < cipherText.length; i++) {
+
                 //If cipherText[i] is in alphabet A-Z
-                if (65 <= cipherText[i] && cipherText[i] <= 90) 
+                if ("A" <= cipherText[i] && cipherText[i] <= "Z") 
                     //Increment the character count in the corresponding key
-                    slfaArrays[i % keyLength][cipherText[i] - 65]++;
+                    console.log(cipherText.charCodeAt(i));
+                    slfaArrays[i % keyLength][cipherText.charCodeAt(i) - 65]++;
+                    console.log(`k-modulo: ${i % keyLength}, char: ${cipherText[i]} (${cipherText.charCodeAt(i)}), char count: ${slfaArrays[i % keyLength][0]}`);
             }
+
+            console.log("slfaArrays: " + slfaArrays);
         </script>
     </footer>
 </html>
