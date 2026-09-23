@@ -15,12 +15,21 @@
                 <!-- USER INPUTS KEY SIZE -->
                 <input type="text" id="key-size-input" name="key length" value="3"/>
 
+                <!-- bar charts for each 0 < i < len(key) -->
+                <div>
+                <div id="barplot-key-1"></div>
+                </div>
+
             </div>
         </div>
 
     </body>
 
     <footer>
+
+        <!-- IMPORT UTILS -->
+        <script src="utils.js"></script>
+
         <!-- THIS WILL EVENTAULLY BE REPLACED WITH BETTER WAY TO INPUT CIPHER TEXT? -->
         <script type="text/javascript">
             const cipherTextDisplay = document.getElementById("cipher-text-p")
@@ -33,40 +42,97 @@
 
             //Get cipher text; uppercase letter characters will be from between [65, 90]
             const cipherText = document.getElementById("cipher-text-p").innerText.toUpperCase();
-            console.log("C: " + cipherText);
+            //console.log("C: " + cipherText);
 
             //Get key length for arrays
             const keyLength = document.getElementById("key-size-input").value;
 
-            //Create array for each character in the key; all character counts initialised to 0
-            function createslfaArrays(keyLength) {
-                const matrix = [];
-                //console.log("KeyLength: " + keyLength);
-                for (let i = 0; i < keyLength; i++) {
-                    const row = [];
-                    for (let j = 0; j < 26; j++) {
-                        row.push(0);
-                    }
-                    //console.log("ROW: " + row);
-                    matrix.push(row);
-                }
-                return matrix;
-            }
-
-            var slfaArrays = createslfaArrays(keyLength);
-
-            //Iterate through array 
-            for (let i = 0; i < cipherText.length; i++) {
-
-                //If cipherText[i] is in alphabet A-Z
-                if ("A" <= cipherText[i] && cipherText[i] <= "Z") 
-                    //Increment the character count in the corresponding key
-                    console.log(cipherText.charCodeAt(i));
-                    slfaArrays[i % keyLength][cipherText.charCodeAt(i) - 65]++;
-                    console.log(`k-modulo: ${i % keyLength}, char: ${cipherText[i]} (${cipherText.charCodeAt(i)}), char count: ${slfaArrays[i % keyLength][0]}`);
-            }
-
-            console.log("slfaArrays: " + slfaArrays);
+            //Defined in utils.js
+            var slfaArrays = parseCipherTextToKslfaArrays(cipherText, createslfaArrays(keyLength));
         </script>
+
+        <!--  BAR PLOT FROM: https://d3-graph-gallery.com/graph/barplot_basic.html -->
+        <!-- load d3.js -->
+        <script src="https://d3js.org/d3.v4.js"></script>
+
+        <script>
+
+            //Create array of each character in alphabet and count
+            function createDataPair(slfaArray) {
+                const arr = [];
+
+                //Populate array with letter of alphabet and count
+                for (let i = 0; i < 26; i++) {
+                    arr.push({
+                        "Letter": String.fromCharCode(i + 65),
+                        "Count": slfaArray[i]
+                    });
+                }
+                return arr;
+            }
+
+            var data = createDataPair(slfaArrays[0]);
+            console.log("Data pair array: " + data);
+
+            //Set dimenions and margins of the graph
+            var margin = {top: 30, right: 30, bottom: 70, left: 60},
+                width  = 460 - margin.left - margin.right,
+                height = 400 - margin.top - margin.bottom;
+
+            //Append the svg object to the body of the page
+            var barChartSvg = d3.select("#barplot-key-1")
+                .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform",
+                        "translate(" + margin.left + ", " + margin.top + ")"
+                );
+
+            //Parse the data
+
+            //Add X axis
+            var x = d3.scaleBand()
+                .range([0, width])
+                .domain(data.map(d => d.Letter))
+                .padding(0.2);
+            barChartSvg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                    .attr("transform", "translate(-10,0)rotate(-45)")
+                    .style("text-anchor", "end");
+
+            
+            console.log("Max val: " + Math.max(...slfaArrays[0]));
+            // Add Y axis
+            var y = d3.scaleLinear()
+                .domain([0, Math.ceil(1.1 * (Math.max(...slfaArrays[0])))])
+                .range([ height, 0]);
+            barChartSvg.append("g")
+                .call(d3.axisLeft(y));
+
+            //Bars
+            barChartSvg.selectAll("mybar")
+                .data(data)
+                .enter()
+                .append("rect")
+                    .attr("x", d => x(d.Letter) )
+                    .attr("y", d => y(d.Count) )
+                    .attr("width", x.bandwidth())
+                    .attr("height", function(d) { return height - y(d.Count); })
+                    .attr("fill", "#000000");
+
+            //Animation from https://d3-graph-gallery.com/graph/barplot_animation_start.html
+            barChartSvg.selectAll("rect")
+                .transition()
+                .duration(800)
+                .attr("y", d => y(d.Count))
+                .attr("height", d => height - y(d.Count))
+                //.delay((d,i) => {console.log(i); return i*100})
+
+
+        </script>
+
     </footer>
 </html>
