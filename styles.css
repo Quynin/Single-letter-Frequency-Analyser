@@ -1,0 +1,17 @@
+/* TODO: MAKE THE STUPID COLUMS WORK */ 
+
+/* Columns for split page */
+.flex-container {
+  display: grid;
+  flex-direction: row;
+  grid-template-columns: repeat (2, 1fr);
+  flex-direction: row;
+  /* Adds a gap between the columns */
+  gap: 20px;
+}
+.column {
+  /* Each column takes up 50% of the width, minus half the gap on each side */
+  width: calc(50% - 10px);
+  padding: 1rem;
+  /* Add other styling as needed */
+}
